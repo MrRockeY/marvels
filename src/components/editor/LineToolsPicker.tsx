@@ -46,7 +46,15 @@ export function LineToolsPicker() {
       </div>
 
       <div className="flex justify-end">
-        <Button variant="ghost" size="sm" onClick={() => removeCategory("horizontal-line") && removeCategory("vertical-line") && removeCategory("underline")}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            removeCategory("horizontal-line");
+            removeCategory("vertical-line");
+            removeCategory("underline");
+          }}
+        >
           Clear All Lines
         </Button>
       </div>
