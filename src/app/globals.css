@@ -1,0 +1,160 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&family=Poppins:wght@500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+:root {
+  --brand-blue-50: #eff6ff;
+  --brand-blue-100: #dbeafe;
+  --brand-blue-200: #bfdbfe;
+  --brand-blue-500: #2563eb;
+  --brand-blue-600: #1d4ed8;
+  --brand-blue-700: #1e40af;
+  --brand-blue-900: #0f172a;
+  --brand-slate-50: #f8fafc;
+  --brand-slate-100: #f1f5f9;
+  --brand-slate-200: #e2e8f0;
+  --brand-slate-500: #475569;
+  --brand-slate-700: #334155;
+  --shadow-soft: 0 25px 60px rgba(37, 99, 235, 0.12);
+}
+
+html,
+body {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top left, rgba(191, 219, 254, 0.7), transparent 28%),
+    linear-gradient(180deg, #f8fbff 0%, #f3f7ff 50%, #eff6ff 100%);
+  color: var(--brand-blue-900);
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+.font-brand {
+  font-family: "Manrope", "Inter", sans-serif;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(37, 99, 235, 0.45) transparent;
+}
+
+::selection {
+  background: rgba(37, 99, 235, 0.16);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: var(--shadow-soft);
+}
+
+.floaty-ring {
+  position: absolute;
+  inset: auto;
+  border-radius: 9999px;
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  animation: floatRing 12s ease-in-out infinite;
+}
+
+@keyframes floatRing {
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(-18px) scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(59, 130, 246, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
+  }
+}
+
+.hero-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #print-area,
+  #print-area * {
+    visibility: visible;
+  }
+
+  #print-area {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .preview-wrapper {
+    width: auto !important;
+    height: auto !important;
+    position: static !important;
+  }
+
+  .preview-scale {
+    position: static !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .document-print-area {
+    box-shadow: none !important;
+  }
+
+  .document-print-area > [aria-hidden] {
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
+
+/* Word-like document editor */
+.document-editor:empty::before,
+.document-editor p:only-child:empty::before {
+  content: attr(data-placeholder);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.document-editor p {
+  margin: 0;
+}
+
+.document-editor:focus {
+  caret-color: #1d4ed8;
+}
