@@ -43,7 +43,12 @@ export function DocumentEditor() {
     : "'Georgia', 'Times New Roman', Times, serif";
 
   // Exact pixel line pitch shared by text metrics and ruled background.
-  const lineHeightPx = Math.max(Math.round(fontSize * lineHeight), Math.ceil(fontSize * 1.15));
+  const lineHeightPx = Math.max(
+    Math.round(fontSize * lineHeight),
+    Math.ceil(fontSize * (isUrdu ? 1.55 : 1.2)),
+  );
+  // Draw the rule near the text baseline (~82% down the line box), not at the bottom edge.
+  const ruleOffsetPx = Math.round(lineHeightPx * (isUrdu ? 0.88 : 0.8));
 
   useEffect(() => {
     hydrateFromStorage();
@@ -222,9 +227,11 @@ export function DocumentEditor() {
                         backgroundImage: `repeating-linear-gradient(
                           to bottom,
                           transparent 0,
-                          transparent calc(${lineHeightPx}px - 1px),
-                          rgba(148, 163, 184, 0.55) calc(${lineHeightPx}px - 1px),
-                          rgba(148, 163, 184, 0.55) ${lineHeightPx}px
+                          transparent ${ruleOffsetPx}px,
+                          rgba(148, 163, 184, 0.65) ${ruleOffsetPx}px,
+                          rgba(148, 163, 184, 0.65) ${ruleOffsetPx + 1}px,
+                          transparent ${ruleOffsetPx + 1}px,
+                          transparent ${lineHeightPx}px
                         )`,
                         backgroundAttachment: "local",
                         backgroundOrigin: "content-box",

@@ -43,11 +43,13 @@ export function isWrappingTextItem(item: WorksheetItem): boolean {
 }
 
 function estimateWrappedHeightMm(text: string, widthMm: number): number {
-  const chars = Array.from(text);
-  // Nastaliq is wide; ~0.55× font size per character on average.
-  const charsPerLine = Math.max(10, Math.floor(widthMm / (TEXT_FONT_MM * 0.55)));
+  const chars = Array.from(text.trim());
+  // Nastaliq is wide; account for spaces as soft wrap points.
+  const avgCharMm = TEXT_FONT_MM * 0.62;
+  const charsPerLine = Math.max(8, Math.floor(widthMm / avgCharMm));
   const lines = Math.max(1, Math.ceil(chars.length / charsPerLine));
-  return Math.min(220, lines * TEXT_FONT_MM * TEXT_LINE_HEIGHT + 6);
+  // Extra room for Nastaliq descenders / diacritics.
+  return Math.min(240, lines * TEXT_FONT_MM * TEXT_LINE_HEIGHT + 10);
 }
 
 /** Computes the vertical space (mm) consumed by the optional worksheet header block. */
