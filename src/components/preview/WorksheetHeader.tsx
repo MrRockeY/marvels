@@ -19,12 +19,20 @@ export function WorksheetHeader({ worksheet, x, y, width, height }: WorksheetHea
     >
       <div className="space-y-1.5">
         {header.showSchoolName && (
-          <p
-            className="text-center font-semibold tracking-wide text-[#1c1712]"
-            style={{ fontFamily: "'Quicksand', sans-serif", fontSize: "5.2mm" }}
-          >
-            {schoolName || "MARVELS Montessori"}
-          </p>
+          <div className="flex justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/marvels-logo.png"
+              alt={schoolName || "MARVELS Montessori"}
+              style={{
+                display: "block",
+                height: "12mm",
+                width: "auto",
+                maxWidth: "70mm",
+                objectFit: "contain",
+              }}
+            />
+          </div>
         )}
         {header.showTitle && title && (
           <p

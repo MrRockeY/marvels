@@ -1,15 +1,15 @@
 "use client";
 
-import { Hash, Type, Languages, Shapes as ShapesIcon, Apple, PawPrint, Sparkles } from "lucide-react";
+import { Hash, Type, Languages, Shapes as ShapesIcon, BookText, ImageIcon, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const QUICK_ACTIONS = [
   { key: "letter", label: "ABC", icon: Type },
   { key: "number", label: "123", icon: Hash },
   { key: "urdu", label: "Alif Bay", icon: Languages },
+  { key: "islamic-text", label: "Islamic", icon: BookText },
   { key: "shape", label: "Shapes", icon: ShapesIcon },
-  { key: "fruit", label: "Fruits", icon: Apple },
-  { key: "animal", label: "Animals", icon: PawPrint },
+  { key: "image", label: "Images", icon: ImageIcon },
 ] as const;
 
 interface EmptyStateProps {
@@ -30,7 +30,7 @@ export function EmptyState({ onStart, onQuickCategory }: EmptyStateProps) {
         Create a worksheet in seconds.
       </h2>
       <p className="mt-3 max-w-md text-sm leading-relaxed text-[#7a6c58]">
-        Choose letters, numbers, shapes, fruits or animals and we&apos;ll arrange everything
+        Choose letters, numbers, Alif Bay, Islamic text or shapes and we&apos;ll arrange everything
         automatically on a print-ready A4 page.
       </p>
       <Button size="lg" variant="primary" className="mt-7" onClick={onStart}>

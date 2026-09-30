@@ -1,17 +1,14 @@
 "use client";
 
-import { ChevronDown, Hash, Type, Languages, Shapes as ShapesIcon, Apple, PawPrint, ImageIcon, BookText, Minus, GripVertical } from "lucide-react";
+import { ChevronDown, Hash, Type, Languages, Shapes as ShapesIcon, ImageIcon, BookText, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NumberPicker } from "@/components/editor/NumberPicker";
 import { AlphabetPicker } from "@/components/editor/AlphabetPicker";
 import { UrduPicker } from "@/components/editor/UrduPicker";
 import { ShapePicker } from "@/components/editor/ShapePicker";
-import { AssetPicker } from "@/components/editor/AssetPicker";
 import { MyImagesPicker } from "@/components/editor/MyImagesPicker";
 import { IslamicContentPicker } from "@/components/editor/IslamicContentPicker";
 import { LineToolsPicker } from "@/components/editor/LineToolsPicker";
-import { FRUITS } from "@/lib/data/fruits";
-import { ANIMALS } from "@/lib/data/animals";
 
 export const CATEGORIES = [
   { key: "number", label: "123 Numbers", icon: Hash },
@@ -20,8 +17,6 @@ export const CATEGORIES = [
   { key: "islamic-text", label: "Islamic & Urdu Text", icon: BookText },
   { key: "shape", label: "Shapes", icon: ShapesIcon },
   { key: "line-tools", label: "Lines & Formatting", icon: Minus },
-  { key: "fruit", label: "Fruits", icon: Apple },
-  { key: "animal", label: "Animals", icon: PawPrint },
   { key: "image", label: "My Images", icon: ImageIcon },
 ] as const;
 
@@ -71,8 +66,6 @@ export function CategoryPanel({ active, onToggle }: CategoryPanelProps) {
                 {key === "islamic-text" && <IslamicContentPicker />}
                 {key === "line-tools" && <LineToolsPicker />}
                 {key === "shape" && <ShapePicker />}
-                {key === "fruit" && <AssetPicker category="fruit" assets={FRUITS} />}
-                {key === "animal" && <AssetPicker category="animal" assets={ANIMALS} />}
                 {key === "image" && <MyImagesPicker />}
               </div>
             )}

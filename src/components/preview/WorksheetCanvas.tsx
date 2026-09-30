@@ -19,8 +19,16 @@ export const WorksheetCanvas = forwardRef<HTMLDivElement, WorksheetCanvasProps>(
     const eraserMode = useWorksheetStore((s) => s.eraserMode);
     const page = getPageSizeMm(worksheet.orientation);
     const margin = MARGIN_MM[worksheet.margins];
-    const hasHeader = worksheet.header.showSchoolName || worksheet.header.showTitle || worksheet.header.showName || worksheet.header.showDate;
-    const headerHeight = calculateHeaderHeight(hasHeader, worksheet.header, worksheet.header.showTitle && !!worksheet.title);
+    const hasHeader =
+      worksheet.header.showSchoolName ||
+      worksheet.header.showTitle ||
+      worksheet.header.showName ||
+      worksheet.header.showDate;
+    const headerHeight = calculateHeaderHeight(
+      hasHeader,
+      worksheet.header,
+      worksheet.header.showTitle && !!worksheet.title,
+    );
 
     const layout = useMemo(
       () =>
@@ -70,6 +78,55 @@ export const WorksheetCanvas = forwardRef<HTMLDivElement, WorksheetCanvasProps>(
           height: `${page.height}mm`,
         }}
       >
+        {worksheet.showMarginLines && (
+          <>
+            {/* Left margin line */}
+            <div
+              className="pointer-events-none absolute top-0"
+              style={{
+                left: `${margin}mm`,
+                width: 0,
+                height: "100%",
+                borderLeft: "0.35mm solid #e8a0a0",
+              }}
+              aria-hidden
+            />
+            {/* Right margin line */}
+            <div
+              className="pointer-events-none absolute top-0"
+              style={{
+                left: `${page.width - margin}mm`,
+                width: 0,
+                height: "100%",
+                borderLeft: "0.35mm solid #e8a0a0",
+              }}
+              aria-hidden
+            />
+            {/* Top margin line */}
+            <div
+              className="pointer-events-none absolute left-0"
+              style={{
+                top: `${margin}mm`,
+                width: "100%",
+                height: 0,
+                borderTop: "0.35mm solid #e8a0a0",
+              }}
+              aria-hidden
+            />
+            {/* Bottom margin line */}
+            <div
+              className="pointer-events-none absolute left-0"
+              style={{
+                top: `${page.height - margin}mm`,
+                width: "100%",
+                height: 0,
+                borderTop: "0.35mm solid #e8a0a0",
+              }}
+              aria-hidden
+            />
+          </>
+        )}
+
         {hasHeader && (
           <WorksheetHeader
             worksheet={worksheet}

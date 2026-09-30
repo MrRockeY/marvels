@@ -24,8 +24,6 @@ const CATEGORY_OPTIONS: { key: ItemCategory; label: string }[] = [
   { key: "letter", label: "Letters" },
   { key: "urdu", label: "Alif Bay" },
   { key: "shape", label: "Shapes" },
-  { key: "fruit", label: "Fruits" },
-  { key: "animal", label: "Animals" },
 ];
 
 const ACTIVITY_OPTIONS: { key: ActivityType; label: string; ready: boolean }[] = [

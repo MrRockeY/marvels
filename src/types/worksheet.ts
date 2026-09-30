@@ -81,6 +81,8 @@ export interface Worksheet {
   items: WorksheetItem[];
   selectedItemId: string | null;
   activityType: ActivityType;
+  /** Draw vertical margin guide lines on the page. */
+  showMarginLines: boolean;
   createdAt: number;
   updatedAt: number;
 }
@@ -114,7 +116,11 @@ export interface LayoutBox {
   item: WorksheetItem;
   x: number; // mm from page top-left
   y: number; // mm from page top-left
-  size: number; // mm square cell size
+  size: number; // mm square cell size (legacy / default)
+  /** Optional non-square width for wrapping text blocks. */
+  width?: number;
+  /** Optional non-square height for wrapping text blocks. */
+  height?: number;
 }
 
 export interface LayoutResult {

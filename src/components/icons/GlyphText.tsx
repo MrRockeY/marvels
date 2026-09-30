@@ -44,6 +44,12 @@ export function GlyphText({ value, style, isUrdu, category }: GlyphTextProps) {
     fontFamily,
     fontWeight: isUrdu ? 500 : 700,
     fontSize,
+    ...(isUrdu
+      ? {
+          direction: "rtl" as const,
+          unicodeBidi: "isolate" as const,
+        }
+      : null),
   };
 
   const pathProps = {

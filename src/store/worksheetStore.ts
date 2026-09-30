@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type { Worksheet, WorksheetItem } from "@/types/worksheet";
 import { makeId } from "@/lib/utils";
 import { getSettings } from "@/lib/settings";
+import { getPageSizeMm, MARGIN_MM } from "@/lib/pageMetrics";
 
 export function createDefaultWorksheet(): Worksheet {
   const now = Date.now();
@@ -29,6 +30,7 @@ export function createDefaultWorksheet(): Worksheet {
     items: [],
     selectedItemId: null,
     activityType: "tracing",
+    showMarginLines: false,
     createdAt: now,
     updatedAt: now,
   };
@@ -141,14 +143,31 @@ export const useWorksheetStore = create<WorksheetStoreState>((set, get) => ({
     })),
 
   resizeSelected: (delta) =>
-    commit(set, get, (w) => ({
-      ...w,
-      items: w.items.map((it) =>
-        it.id === w.selectedItemId
-          ? { ...it, scale: Math.max(0.5, Math.min(2, (it.scale ?? 1) + delta)) }
-          : it,
-      ),
-    })),
+    commit(set, get, (w) => {
+      const page = getPageSizeMm(w.orientation);
+      const margin = MARGIN_MM[w.margins];
+      const printableW = page.width - margin * 2;
+      const printableH = page.height - margin * 2;
+      // Approximate current cell from itemSize slider (10–62mm).
+      const cellApprox = 10 + (Math.max(0, Math.min(100, w.itemSize)) / 100) * 52;
+
+      return {
+        ...w,
+        items: w.items.map((it) => {
+          if (it.id !== w.selectedItemId) return it;
+          const current = it.scale ?? 1;
+          // Images can grow up to full printable area; other items stay modest.
+          const maxScale =
+            it.category === "image"
+              ? Math.max(2, Math.min(printableW, printableH) / Math.max(8, cellApprox))
+              : 2.5;
+          return {
+            ...it,
+            scale: Math.max(0.4, Math.min(maxScale, current + delta)),
+          };
+        }),
+      };
+    }),
 
   updateSettings: (patch) => commit(set, get, (w) => ({ ...w, ...patch })),
 
@@ -177,7 +196,17 @@ export const useWorksheetStore = create<WorksheetStoreState>((set, get) => ({
   },
 
   loadWorksheet: (worksheet) =>
-    set({ worksheet, past: [], future: [], isDirty: false, currentSavedId: worksheet.id, lastSavedAt: worksheet.updatedAt }),
+    set({
+      worksheet: {
+        ...worksheet,
+        showMarginLines: worksheet.showMarginLines ?? false,
+      },
+      past: [],
+      future: [],
+      isDirty: false,
+      currentSavedId: worksheet.id,
+      lastSavedAt: worksheet.updatedAt,
+    }),
 
   markSaved: (savedId, name) =>
     set((s) => ({

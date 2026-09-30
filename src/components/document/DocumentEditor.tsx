@@ -42,6 +42,9 @@ export function DocumentEditor() {
     ? "'Noto Nastaliq Urdu', serif"
     : "'Georgia', 'Times New Roman', Times, serif";
 
+  // Exact pixel line pitch shared by text metrics and ruled background.
+  const lineHeightPx = Math.max(Math.round(fontSize * lineHeight), Math.ceil(fontSize * 1.15));
+
   useEffect(() => {
     hydrateFromStorage();
   }, [hydrateFromStorage]);
@@ -80,7 +83,7 @@ export function DocumentEditor() {
 
   useEffect(() => {
     updatePageCount();
-  }, [html, fontSize, lineHeight, language, updatePageCount]);
+  }, [html, fontSize, lineHeight, language, linedPages, updatePageCount]);
 
   const handleInput = () => {
     const editor = editorRef.current;
@@ -113,8 +116,6 @@ export function DocumentEditor() {
     document.execCommand("delete");
     handleInput();
   };
-
-  const lineStepPx = fontSize * lineHeight;
 
   return (
     <div className="w-full">
@@ -165,7 +166,6 @@ export function DocumentEditor() {
                 minHeight: PAGE_HEIGHT_PX * pageCount,
               }}
             >
-              {/* Page backgrounds + lined overlays */}
               {Array.from({ length: pageCount }).map((_, index) => (
                 <div
                   key={index}
@@ -180,22 +180,6 @@ export function DocumentEditor() {
                   }}
                   aria-hidden
                 >
-                  {linedPages && (
-                    <div
-                      className="absolute inset-0"
-                      style={{
-                        padding: PAGE_PADDING_PX,
-                        backgroundImage: `repeating-linear-gradient(
-                          to bottom,
-                          transparent 0,
-                          transparent calc(${lineStepPx}px - 1px),
-                          rgba(148, 163, 184, 0.35) calc(${lineStepPx}px - 1px),
-                          rgba(148, 163, 184, 0.35) ${lineStepPx}px
-                        )`,
-                        backgroundClip: "content-box",
-                      }}
-                    />
-                  )}
                   <span className="no-print absolute bottom-3 left-1/2 -translate-x-1/2 text-[10px] text-slate-400">
                     Page {index + 1}
                   </span>
@@ -219,16 +203,35 @@ export function DocumentEditor() {
                 spellCheck
                 onInput={handleInput}
                 onBlur={handleInput}
-                className="document-editor relative z-10 outline-none"
+                className={cn(
+                  "document-editor relative z-10 outline-none",
+                  linedPages && "document-editor-lined",
+                )}
                 style={{
                   minHeight: PAGE_HEIGHT_PX - PAGE_PADDING_PX * 2,
                   padding: PAGE_PADDING_PX,
                   fontSize,
-                  lineHeight,
+                  // Pixel line-height locks glyphs to the ruled pitch.
+                  lineHeight: `${lineHeightPx}px`,
                   textAlign: align,
                   fontFamily,
                   color: "#1e293b",
                   wordBreak: "break-word",
+                  ...(linedPages
+                    ? {
+                        backgroundImage: `repeating-linear-gradient(
+                          to bottom,
+                          transparent 0,
+                          transparent calc(${lineHeightPx}px - 1px),
+                          rgba(148, 163, 184, 0.55) calc(${lineHeightPx}px - 1px),
+                          rgba(148, 163, 184, 0.55) ${lineHeightPx}px
+                        )`,
+                        backgroundAttachment: "local",
+                        backgroundOrigin: "content-box",
+                        backgroundClip: "content-box",
+                        backgroundPositionY: "0px",
+                      }
+                    : null),
                 }}
               />
             </div>

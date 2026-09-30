@@ -26,7 +26,10 @@ export function IslamicContentPicker() {
   const [customText, setCustomText] = useState("");
 
   const addContent = (value: string) => {
-    const toAdd = Array.from({ length: copies }, () => ({ category: "urdu" as const, value }));
+    const toAdd = Array.from({ length: copies }, () => ({
+      category: "islamic-text" as const,
+      value,
+    }));
     addItems(toAdd);
   };
 
@@ -41,7 +44,14 @@ export function IslamicContentPicker() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <CopiesStepper value={copies} onChange={setCopies} />
-        <Button variant="ghost" size="sm" onClick={() => removeCategory("urdu")}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            removeCategory("islamic-text");
+            removeCategory("urdu");
+          }}
+        >
           Clear Urdu/Arabic
         </Button>
       </div>

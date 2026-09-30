@@ -24,7 +24,7 @@ export function HeaderControls() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between rounded-xl border border-[#e4d6c3] bg-white px-3 py-2.5">
-        <Label htmlFor="show-school">School name</Label>
+        <Label htmlFor="show-school">School logo</Label>
         <Switch
           id="show-school"
           checked={worksheet.header.showSchoolName}

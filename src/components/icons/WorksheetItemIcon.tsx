@@ -7,6 +7,8 @@ import { ShapeIcon } from "@/components/icons/ShapeIcon";
 import { FruitIcon } from "@/components/icons/FruitIcon";
 import { AnimalIcon } from "@/components/icons/AnimalIcon";
 import { GlyphText } from "@/components/icons/GlyphText";
+import { WrappedArabicText } from "@/components/icons/WrappedArabicText";
+import { isWrappingTextItem } from "@/lib/layoutEngine";
 
 interface WorksheetItemIconProps {
   item: WorksheetItem;
@@ -28,6 +30,10 @@ export function WorksheetItemIcon({ item, style, inkSaver, className }: Workshee
         draggable={false}
       />
     );
+  }
+
+  if (isWrappingTextItem(item) || item.category === "islamic-text") {
+    return <WrappedArabicText value={item.value} style={style} className={className} />;
   }
 
   const paint = getIconPaint(style, inkSaver);

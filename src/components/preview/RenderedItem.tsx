@@ -18,32 +18,58 @@ export function RenderedItem({ box, style, inkSaver, selected }: RenderedItemPro
   const removeItem = useWorksheetStore((s) => s.removeItem);
   const eraserMode = useWorksheetStore((s) => s.eraserMode);
   const scale = box.item.scale ?? 1;
+  const width = box.width ?? box.size;
+  const height = box.height ?? box.size;
+  const isRtl =
+    box.item.category === "urdu" || box.item.category === "islamic-text";
+
+  const handleSelect = () => {
+    if (eraserMode) {
+      removeItem(box.item.id);
+      return;
+    }
+    setSelected(selected ? null : box.item.id);
+  };
 
   return (
     <div
       className="absolute"
-      style={{ left: `${box.x}mm`, top: `${box.y}mm`, width: `${box.size}mm`, height: `${box.size}mm` }}
+      dir={isRtl ? "rtl" : undefined}
+      lang={isRtl ? "ur" : undefined}
+      style={{
+        left: `${box.x}mm`,
+        top: `${box.y}mm`,
+        width: `${width}mm`,
+        height: `${height}mm`,
+      }}
     >
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         onClick={(e) => {
           e.stopPropagation();
-          if (eraserMode) {
-            removeItem(box.item.id);
-            return;
+          handleSelect();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            e.stopPropagation();
+            handleSelect();
           }
-          setSelected(selected ? null : box.item.id);
         }}
         className={cn(
-          "no-print-outline relative flex h-full w-full items-center justify-center rounded-md transition-shadow",
+          "no-print-outline relative flex h-full w-full cursor-pointer items-center justify-center rounded-md transition-shadow",
           selected && !eraserMode && "no-print ring-2 ring-[#b5652f] ring-offset-2",
         )}
-        style={{ transform: `scale(${scale})` }}
+        style={{
+          transform: `scale(${scale})`,
+          transformOrigin: "center center",
+        }}
         aria-label={`${box.item.category} ${box.item.label ?? box.item.value}`}
       >
         <WorksheetItemIcon item={box.item} style={style} inkSaver={inkSaver} className="h-full w-full" />
-        {selected && !eraserMode && <ItemToolbar />}
-      </button>
+      </div>
+      {selected && !eraserMode && <ItemToolbar />}
     </div>
   );
 }

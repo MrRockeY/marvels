@@ -5,6 +5,7 @@ import { useWorksheetStore } from "@/store/worksheetStore";
 import type { MarginSize } from "@/types/worksheet";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 const MARGIN_OPTIONS: { key: MarginSize; label: string }[] = [
   { key: "small", label: "Small" },
@@ -65,6 +66,16 @@ export function PageControls() {
           ))}
         </div>
       </div>
+
+      <div className="flex items-center justify-between rounded-xl border border-[#e4d6c3] bg-white px-3 py-2.5">
+        <Label htmlFor="margin-lines">Margin lines</Label>
+        <Switch
+          id="margin-lines"
+          checked={worksheet.showMarginLines}
+          onCheckedChange={(v) => updateSettings({ showMarginLines: v })}
+        />
+      </div>
+
       <p className="text-[11px] text-[#a3947c]">A4 page size · dimensions preserved when printing.</p>
     </div>
   );
