@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { A4_MM } from "@/lib/pageMetrics";
 import { useDocumentStore } from "@/store/documentStore";
 import { DocumentToolbar } from "@/components/document/DocumentToolbar";
 import { DocumentUrduKeyboard } from "@/components/document/DocumentUrduKeyboard";
+import { MarvelsLogo } from "@/components/shared/MarvelsLogo";
+import { clampLogoSizeMm, logoBlockHeightMm } from "@/lib/logoSize";
 import { cn } from "@/lib/utils";
 
 const PX_PER_MM = 96 / 25.4;
@@ -21,6 +23,10 @@ export function DocumentEditor() {
   const lineHeight = useDocumentStore((s) => s.lineHeight);
   const align = useDocumentStore((s) => s.align);
   const linedPages = useDocumentStore((s) => s.linedPages);
+  const showLogo = useDocumentStore((s) => s.showLogo);
+  const logoSizeMm = useDocumentStore((s) => s.logoSizeMm);
+  const showNameLine = useDocumentStore((s) => s.showNameLine);
+  const showDateLine = useDocumentStore((s) => s.showDateLine);
 
   const setLanguage = useDocumentStore((s) => s.setLanguage);
   const setTitle = useDocumentStore((s) => s.setTitle);
@@ -29,6 +35,10 @@ export function DocumentEditor() {
   const setLineHeight = useDocumentStore((s) => s.setLineHeight);
   const setAlign = useDocumentStore((s) => s.setAlign);
   const setLinedPages = useDocumentStore((s) => s.setLinedPages);
+  const setShowLogo = useDocumentStore((s) => s.setShowLogo);
+  const setLogoSizeMm = useDocumentStore((s) => s.setLogoSizeMm);
+  const setShowNameLine = useDocumentStore((s) => s.setShowNameLine);
+  const setShowDateLine = useDocumentStore((s) => s.setShowDateLine);
   const hydrateFromStorage = useDocumentStore((s) => s.hydrateFromStorage);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -42,17 +52,30 @@ export function DocumentEditor() {
     ? "'Noto Nastaliq Urdu', serif"
     : "'Georgia', 'Times New Roman', Times, serif";
 
-  // Exact pixel line pitch shared by text metrics and ruled background.
+  const safeLogoSize = clampLogoSizeMm(logoSizeMm);
+  const hasHeader = showLogo || showNameLine || showDateLine;
+  const headerHeightMm = useMemo(() => {
+    if (!hasHeader) return 0;
+    let h = 2;
+    if (showLogo) h += logoBlockHeightMm(safeLogoSize);
+    if (showNameLine || showDateLine) h += 10;
+    h += 4;
+    return h;
+  }, [hasHeader, showLogo, showNameLine, showDateLine, safeLogoSize]);
+
+  const headerHeightPx = headerHeightMm * PX_PER_MM;
+  const contentTopPad = PAGE_PADDING_PX + headerHeightPx;
+
   const lineHeightPx = Math.max(
     Math.round(fontSize * lineHeight),
     Math.ceil(fontSize * (isUrdu ? 1.55 : 1.2)),
   );
-  // Draw the rule near the text baseline (~82% down the line box), not at the bottom edge.
   const ruleOffsetPx = Math.round(lineHeightPx * (isUrdu ? 0.88 : 0.8));
 
   useEffect(() => {
     hydrateFromStorage();
   }, [hydrateFromStorage]);
+
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -82,13 +105,13 @@ export function DocumentEditor() {
     const editor = editorRef.current;
     if (!editor) return;
     const contentHeight = editor.scrollHeight;
-    const usable = PAGE_HEIGHT_PX - PAGE_PADDING_PX * 2;
-    setPageCount(Math.max(1, Math.ceil(contentHeight / usable)));
-  }, []);
+    const usable = PAGE_HEIGHT_PX - contentTopPad - PAGE_PADDING_PX;
+    setPageCount(Math.max(1, Math.ceil(contentHeight / Math.max(usable, lineHeightPx))));
+  }, [contentTopPad, lineHeightPx]);
 
   useEffect(() => {
     updatePageCount();
-  }, [html, fontSize, lineHeight, language, linedPages, updatePageCount]);
+  }, [html, fontSize, lineHeight, language, linedPages, headerHeightMm, updatePageCount]);
 
   const handleInput = () => {
     const editor = editorRef.current;
@@ -130,11 +153,19 @@ export function DocumentEditor() {
         lineHeight={lineHeight}
         align={align}
         linedPages={linedPages}
+        showLogo={showLogo}
+        logoSizeMm={safeLogoSize}
+        showNameLine={showNameLine}
+        showDateLine={showDateLine}
         onLanguageChange={setLanguage}
         onFontSizeChange={setFontSize}
         onLineHeightChange={setLineHeight}
         onAlignChange={setAlign}
         onLinedPagesChange={setLinedPages}
+        onShowLogoChange={setShowLogo}
+        onLogoSizeChange={setLogoSizeMm}
+        onShowNameLineChange={setShowNameLine}
+        onShowDateLineChange={setShowDateLine}
         onFormat={runFormat}
       />
 
@@ -185,6 +216,52 @@ export function DocumentEditor() {
                   }}
                   aria-hidden
                 >
+                  {hasHeader && (
+                    <div
+                      className="absolute left-0 right-0 flex flex-col justify-between"
+                      style={{
+                        top: PAGE_PADDING_PX,
+                        left: PAGE_PADDING_PX,
+                        right: PAGE_PADDING_PX,
+                        width: `calc(100% - ${PAGE_PADDING_PX * 2}px)`,
+                        height: headerHeightPx,
+                      }}
+                    >
+                      <div className="space-y-1">
+                        {showLogo && (
+                          <div className="flex justify-center">
+                            <MarvelsLogo sizeMm={safeLogoSize} />
+                          </div>
+                        )}
+                        {(showNameLine || showDateLine) && (
+                          <div
+                            className="flex items-baseline justify-between pt-1"
+                            style={{ fontSize: "3.6mm", color: "#1c1712" }}
+                          >
+                            {showNameLine && (
+                              <span>
+                                Name:{" "}
+                                <span
+                                  className="inline-block border-b border-[#1c1712]"
+                                  style={{ width: "55mm" }}
+                                />
+                              </span>
+                            )}
+                            {showDateLine && (
+                              <span>
+                                Date:{" "}
+                                <span
+                                  className="inline-block border-b border-[#1c1712]"
+                                  style={{ width: "30mm" }}
+                                />
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <div className="border-b border-[#d8cbb5]" />
+                    </div>
+                  )}
                   <span className="no-print absolute bottom-3 left-1/2 -translate-x-1/2 text-[10px] text-slate-400">
                     Page {index + 1}
                   </span>
@@ -213,10 +290,12 @@ export function DocumentEditor() {
                   linedPages && "document-editor-lined",
                 )}
                 style={{
-                  minHeight: PAGE_HEIGHT_PX - PAGE_PADDING_PX * 2,
-                  padding: PAGE_PADDING_PX,
+                  minHeight: PAGE_HEIGHT_PX - contentTopPad - PAGE_PADDING_PX,
+                  paddingTop: contentTopPad,
+                  paddingBottom: PAGE_PADDING_PX,
+                  paddingLeft: PAGE_PADDING_PX,
+                  paddingRight: PAGE_PADDING_PX,
                   fontSize,
-                  // Pixel line-height locks glyphs to the ruled pitch.
                   lineHeight: `${lineHeightPx}px`,
                   textAlign: align,
                   fontFamily,

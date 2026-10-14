@@ -9,6 +9,7 @@ import type {
 } from "@/types/worksheet";
 import { MARGIN_MM, getPageSizeMm } from "@/lib/pageMetrics";
 import type { MarginSize } from "@/types/worksheet";
+import { LOGO_SIZE_DEFAULT_MM, logoBlockHeightMm } from "@/lib/logoSize";
 
 export interface LayoutEngineInput {
   items: WorksheetItem[];
@@ -23,6 +24,7 @@ export interface LayoutEngineInput {
   headerFields: HeaderSettings;
   hasTitle: boolean;
   titleAlign?: TitleAlign;
+  logoSizeMm?: number;
 }
 
 const MIN_CELL_MM = 10;
@@ -57,10 +59,11 @@ export function calculateHeaderHeight(
   hasHeader: boolean,
   fields: HeaderSettings,
   hasTitle: boolean,
+  logoSizeMm = LOGO_SIZE_DEFAULT_MM,
 ): number {
   if (!hasHeader) return 0;
   let height = 4; // top breathing room
-  if (fields.showSchoolName) height += 14; // logo block
+  if (fields.showSchoolName) height += logoBlockHeightMm(logoSizeMm);
   if (hasTitle) height += 9;
   if (fields.showName || fields.showDate) height += 12;
   height += 5; // divider + bottom margin before content
@@ -74,7 +77,12 @@ export function calculateHeaderHeight(
 export function calculateWorksheetLayout(input: LayoutEngineInput): LayoutResult {
   const page = getPageSizeMm(input.orientation);
   const margin = MARGIN_MM[input.margins];
-  const headerHeight = calculateHeaderHeight(input.hasHeader, input.headerFields, input.hasTitle);
+  const headerHeight = calculateHeaderHeight(
+    input.hasHeader,
+    input.headerFields,
+    input.hasTitle,
+    input.logoSizeMm ?? LOGO_SIZE_DEFAULT_MM,
+  );
 
   const printableWidth = page.width - margin * 2;
   const printableHeight = page.height - margin * 2 - headerHeight;

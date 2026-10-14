@@ -68,6 +68,8 @@ export interface Worksheet {
   title: string;
   titleAlign: TitleAlign;
   header: HeaderSettings;
+  /** School logo height on the page, in millimetres. */
+  logoSizeMm: number;
   orientation: Orientation;
   margins: MarginSize;
   style: WorksheetStyle;

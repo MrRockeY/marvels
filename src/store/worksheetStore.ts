@@ -3,6 +3,7 @@ import type { Worksheet, WorksheetItem } from "@/types/worksheet";
 import { makeId } from "@/lib/utils";
 import { getSettings } from "@/lib/settings";
 import { getPageSizeMm, MARGIN_MM } from "@/lib/pageMetrics";
+import { LOGO_SIZE_DEFAULT_MM } from "@/lib/logoSize";
 
 export function createDefaultWorksheet(): Worksheet {
   const now = Date.now();
@@ -18,6 +19,7 @@ export function createDefaultWorksheet(): Worksheet {
       showName: true,
       showDate: true,
     },
+    logoSizeMm: LOGO_SIZE_DEFAULT_MM,
     orientation: "portrait",
     margins: "medium",
     style: "solid",
@@ -200,6 +202,7 @@ export const useWorksheetStore = create<WorksheetStoreState>((set, get) => ({
       worksheet: {
         ...worksheet,
         showMarginLines: worksheet.showMarginLines ?? false,
+        logoSizeMm: worksheet.logoSizeMm ?? LOGO_SIZE_DEFAULT_MM,
       },
       past: [],
       future: [],

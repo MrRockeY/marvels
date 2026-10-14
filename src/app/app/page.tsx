@@ -40,6 +40,10 @@ export default function StudioPage() {
   const documentLineHeight = useDocumentStore((s) => s.lineHeight);
   const documentAlign = useDocumentStore((s) => s.align);
   const documentLinedPages = useDocumentStore((s) => s.linedPages);
+  const documentShowLogo = useDocumentStore((s) => s.showLogo);
+  const documentLogoSizeMm = useDocumentStore((s) => s.logoSizeMm);
+  const documentShowNameLine = useDocumentStore((s) => s.showNameLine);
+  const documentShowDateLine = useDocumentStore((s) => s.showDateLine);
 
   const [activeCategory, setActiveCategory] = useState<CategoryKey | null>(null);
   const [saveOpen, setSaveOpen] = useState(false);
@@ -58,6 +62,10 @@ export default function StudioPage() {
         lineHeight: documentLineHeight,
         align: documentAlign,
         linedPages: documentLinedPages,
+        showLogo: documentShowLogo,
+        logoSizeMm: documentLogoSizeMm,
+        showNameLine: documentShowNameLine,
+        showDateLine: documentShowDateLine,
       });
       useDocumentStore.getState().setTitle(name || documentTitle);
       documentMarkSaved();

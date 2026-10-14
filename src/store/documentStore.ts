@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { loadSavedDocument } from "@/lib/documentStorage";
+import { clampLogoSizeMm, LOGO_SIZE_DEFAULT_MM } from "@/lib/logoSize";
 
 export type StudioMode = "worksheet" | "document";
 export type DocumentLanguage = "en" | "ur";
@@ -16,6 +17,10 @@ export interface DocumentState {
   lineHeight: number;
   align: DocumentAlign;
   linedPages: boolean;
+  showLogo: boolean;
+  logoSizeMm: number;
+  showNameLine: boolean;
+  showDateLine: boolean;
   isDirty: boolean;
   hydrated: boolean;
   past: string[];
@@ -31,6 +36,10 @@ export interface DocumentState {
   setLineHeight: (value: number) => void;
   setAlign: (align: DocumentAlign) => void;
   setLinedPages: (lined: boolean) => void;
+  setShowLogo: (show: boolean) => void;
+  setLogoSizeMm: (size: number) => void;
+  setShowNameLine: (show: boolean) => void;
+  setShowDateLine: (show: boolean) => void;
   markSaved: () => void;
   undo: () => void;
   redo: () => void;
@@ -48,6 +57,10 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
   lineHeight: 1.8,
   align: "left",
   linedPages: true,
+  showLogo: true,
+  logoSizeMm: LOGO_SIZE_DEFAULT_MM,
+  showNameLine: true,
+  showDateLine: true,
   isDirty: false,
   hydrated: false,
   past: [],
@@ -68,6 +81,10 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
       lineHeight: saved.lineHeight,
       align: saved.align,
       linedPages: saved.linedPages,
+      showLogo: saved.showLogo ?? true,
+      logoSizeMm: clampLogoSizeMm(saved.logoSizeMm ?? LOGO_SIZE_DEFAULT_MM),
+      showNameLine: saved.showNameLine ?? true,
+      showDateLine: saved.showDateLine ?? true,
       isDirty: false,
       hydrated: true,
     });
@@ -104,6 +121,10 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
   setLineHeight: (lineHeight) => set({ lineHeight, isDirty: true }),
   setAlign: (align) => set({ align, isDirty: true }),
   setLinedPages: (linedPages) => set({ linedPages }),
+  setShowLogo: (showLogo) => set({ showLogo, isDirty: true }),
+  setLogoSizeMm: (size) => set({ logoSizeMm: clampLogoSizeMm(size), isDirty: true }),
+  setShowNameLine: (showNameLine) => set({ showNameLine, isDirty: true }),
+  setShowDateLine: (showDateLine) => set({ showDateLine, isDirty: true }),
   markSaved: () => set({ isDirty: false }),
 
   undo: () => {

@@ -12,8 +12,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import type { DocumentAlign, DocumentLanguage } from "@/store/documentStore";
+import {
+  clampLogoSizeMm,
+  LOGO_SIZE_MAX_MM,
+  LOGO_SIZE_MIN_MM,
+} from "@/lib/logoSize";
 
 function LinedIcon({ className }: { className?: string }) {
   return (
@@ -37,11 +43,19 @@ interface DocumentToolbarProps {
   lineHeight: number;
   align: DocumentAlign;
   linedPages: boolean;
+  showLogo: boolean;
+  logoSizeMm: number;
+  showNameLine: boolean;
+  showDateLine: boolean;
   onLanguageChange: (lang: DocumentLanguage) => void;
   onFontSizeChange: (size: number) => void;
   onLineHeightChange: (value: number) => void;
   onAlignChange: (align: DocumentAlign) => void;
   onLinedPagesChange: (lined: boolean) => void;
+  onShowLogoChange: (show: boolean) => void;
+  onLogoSizeChange: (size: number) => void;
+  onShowNameLineChange: (show: boolean) => void;
+  onShowDateLineChange: (show: boolean) => void;
   onFormat: (command: string, value?: string) => void;
 }
 
@@ -65,15 +79,23 @@ export function DocumentToolbar({
   lineHeight,
   align,
   linedPages,
+  showLogo,
+  logoSizeMm,
+  showNameLine,
+  showDateLine,
   onLanguageChange,
   onFontSizeChange,
   onLineHeightChange,
   onAlignChange,
   onLinedPagesChange,
+  onShowLogoChange,
+  onLogoSizeChange,
+  onShowNameLineChange,
+  onShowDateLineChange,
   onFormat,
 }: DocumentToolbarProps) {
   return (
-    <div className="no-print sticky top-16 z-30 mb-4 rounded-xl border border-blue-100 bg-white/95 p-3 shadow-sm backdrop-blur">
+    <div className="no-print sticky top-16 z-30 mb-4 space-y-3 rounded-xl border border-blue-100 bg-white/95 p-3 shadow-sm backdrop-blur">
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex rounded-lg border border-slate-200 p-0.5">
           <button
@@ -198,6 +220,61 @@ export function DocumentToolbar({
             id="lined-pages"
             checked={linedPages}
             onCheckedChange={onLinedPagesChange}
+            className="data-[state=checked]:bg-blue-600 data-[state=unchecked]:bg-slate-200"
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 border-t border-blue-50 pt-3">
+        <div className="flex items-center gap-2">
+          <Label htmlFor="doc-logo" className="text-xs text-slate-600">
+            Header logo
+          </Label>
+          <Switch
+            id="doc-logo"
+            checked={showLogo}
+            onCheckedChange={onShowLogoChange}
+            className="data-[state=checked]:bg-blue-600 data-[state=unchecked]:bg-slate-200"
+          />
+        </div>
+
+        {showLogo && (
+          <div className="flex min-w-[180px] flex-1 items-center gap-2 sm:max-w-xs">
+            <span className="shrink-0 text-xs text-slate-600">Logo size</span>
+            <Slider
+              min={LOGO_SIZE_MIN_MM}
+              max={LOGO_SIZE_MAX_MM}
+              step={1}
+              value={[logoSizeMm]}
+              onValueChange={(val) => onLogoSizeChange(clampLogoSizeMm(val[0]))}
+              className="flex-1"
+            />
+            <span className="w-10 shrink-0 text-right text-xs font-medium tabular-nums text-slate-700">
+              {Math.round(logoSizeMm)}mm
+            </span>
+          </div>
+        )}
+
+        <div className="flex items-center gap-2">
+          <Label htmlFor="doc-name" className="text-xs text-slate-600">
+            Name
+          </Label>
+          <Switch
+            id="doc-name"
+            checked={showNameLine}
+            onCheckedChange={onShowNameLineChange}
+            className="data-[state=checked]:bg-blue-600 data-[state=unchecked]:bg-slate-200"
+          />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Label htmlFor="doc-date" className="text-xs text-slate-600">
+            Date
+          </Label>
+          <Switch
+            id="doc-date"
+            checked={showDateLine}
+            onCheckedChange={onShowDateLineChange}
             className="data-[state=checked]:bg-blue-600 data-[state=unchecked]:bg-slate-200"
           />
         </div>

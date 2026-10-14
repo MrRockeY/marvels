@@ -28,6 +28,7 @@ export const WorksheetCanvas = forwardRef<HTMLDivElement, WorksheetCanvasProps>(
       hasHeader,
       worksheet.header,
       worksheet.header.showTitle && !!worksheet.title,
+      worksheet.logoSizeMm,
     );
 
     const layout = useMemo(
@@ -44,6 +45,7 @@ export const WorksheetCanvas = forwardRef<HTMLDivElement, WorksheetCanvasProps>(
           hasHeader,
           headerFields: worksheet.header,
           hasTitle: worksheet.header.showTitle && !!worksheet.title,
+          logoSizeMm: worksheet.logoSizeMm,
         }),
       [
         worksheet.items,
@@ -56,6 +58,7 @@ export const WorksheetCanvas = forwardRef<HTMLDivElement, WorksheetCanvasProps>(
         worksheet.colGap,
         worksheet.header,
         worksheet.title,
+        worksheet.logoSizeMm,
         hasHeader,
       ],
     );

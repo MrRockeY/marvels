@@ -1,4 +1,6 @@
 import type { Worksheet } from "@/types/worksheet";
+import { MarvelsLogo } from "@/components/shared/MarvelsLogo";
+import { LOGO_SIZE_DEFAULT_MM } from "@/lib/logoSize";
 
 interface WorksheetHeaderProps {
   worksheet: Worksheet;
@@ -10,6 +12,7 @@ interface WorksheetHeaderProps {
 
 export function WorksheetHeader({ worksheet, x, y, width, height }: WorksheetHeaderProps) {
   const { header, schoolName, title, titleAlign } = worksheet;
+  const logoSizeMm = worksheet.logoSizeMm ?? LOGO_SIZE_DEFAULT_MM;
   if (!header.showSchoolName && !header.showTitle && !header.showName && !header.showDate) return null;
 
   return (
@@ -20,18 +23,7 @@ export function WorksheetHeader({ worksheet, x, y, width, height }: WorksheetHea
       <div className="space-y-1.5">
         {header.showSchoolName && (
           <div className="flex justify-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/marvels-logo.png"
-              alt={schoolName || "MARVELS Montessori"}
-              style={{
-                display: "block",
-                height: "12mm",
-                width: "auto",
-                maxWidth: "70mm",
-                objectFit: "contain",
-              }}
-            />
+            <MarvelsLogo sizeMm={logoSizeMm} alt={schoolName || "MARVELS Montessori"} />
           </div>
         )}
         {header.showTitle && title && (

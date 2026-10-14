@@ -6,6 +6,13 @@ import type { TitleAlign } from "@/types/worksheet";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import {
+  clampLogoSizeMm,
+  LOGO_SIZE_DEFAULT_MM,
+  LOGO_SIZE_MAX_MM,
+  LOGO_SIZE_MIN_MM,
+} from "@/lib/logoSize";
 
 const ALIGN_OPTIONS: { key: TitleAlign; icon: typeof AlignLeft }[] = [
   { key: "left", icon: AlignLeft },
@@ -16,6 +23,7 @@ const ALIGN_OPTIONS: { key: TitleAlign; icon: typeof AlignLeft }[] = [
 export function HeaderControls() {
   const worksheet = useWorksheetStore((s) => s.worksheet);
   const updateSettings = useWorksheetStore((s) => s.updateSettings);
+  const logoSizeMm = worksheet.logoSizeMm ?? LOGO_SIZE_DEFAULT_MM;
 
   const setHeaderField = (field: keyof typeof worksheet.header, value: boolean) => {
     updateSettings({ header: { ...worksheet.header, [field]: value } });
@@ -23,13 +31,30 @@ export function HeaderControls() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between rounded-xl border border-[#e4d6c3] bg-white px-3 py-2.5">
-        <Label htmlFor="show-school">School logo</Label>
-        <Switch
-          id="show-school"
-          checked={worksheet.header.showSchoolName}
-          onCheckedChange={(v) => setHeaderField("showSchoolName", v)}
-        />
+      <div className="space-y-3 rounded-xl border border-[#e4d6c3] bg-white px-3 py-2.5">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="show-school">School logo</Label>
+          <Switch
+            id="show-school"
+            checked={worksheet.header.showSchoolName}
+            onCheckedChange={(v) => setHeaderField("showSchoolName", v)}
+          />
+        </div>
+        {worksheet.header.showSchoolName && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs text-[#5c4d3c]">
+              <span>Logo size</span>
+              <span className="font-medium tabular-nums">{Math.round(logoSizeMm)} mm</span>
+            </div>
+            <Slider
+              min={LOGO_SIZE_MIN_MM}
+              max={LOGO_SIZE_MAX_MM}
+              step={1}
+              value={[logoSizeMm]}
+              onValueChange={(val) => updateSettings({ logoSizeMm: clampLogoSizeMm(val[0]) })}
+            />
+          </div>
+        )}
       </div>
 
       <div className="space-y-2 rounded-xl border border-[#e4d6c3] bg-white px-3 py-2.5">

@@ -10,6 +10,10 @@ export interface SavedDocumentPayload {
   lineHeight: number;
   align: DocumentAlign;
   linedPages: boolean;
+  showLogo?: boolean;
+  logoSizeMm?: number;
+  showNameLine?: boolean;
+  showDateLine?: boolean;
   updatedAt: string;
 }
 
